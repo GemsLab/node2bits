@@ -14,7 +14,7 @@
 ```
 @inproceedings{DBLP:conf/kdd/JinHRK19,
   author    = {Di Jin and
-               Mark Heiamann and
+               Mark Heimann and
                Ryan A. Rossi and
                Danai Koutra},
   title     = {node2bits: Compact Time- and Attribute-aware Node Representations},
