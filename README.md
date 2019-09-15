@@ -9,7 +9,7 @@
 </p>
 
 
-**Citation (bibtex)**:
+**Citation **:
 ```
 @inproceedings{node2bits-ECML19,
    author={Di Jin and Mark Heimann and Ryan A. Rossi and Danai Koutra},
