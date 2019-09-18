@@ -74,6 +74,13 @@ python main.py --input <graph_file_path> --cat <category_file_path> --output <em
 - walk_mod, the bias of temporal random walk, can be ```<random>, <early>, <late>```. Default value: 'early'
 - ignore_time, a Boolean variable only used when running node2bits on a temporal input graph regardless of its time, i.e., only consider the first 3 columns of the temporal edgelist. Default value: False.
 
+## Output
+In addition to embedding file indicated in the path ```output```, node2bits also outputs "rep.npz", which is the sparse binary embedding file, and totally ```<scope>``` hashtables mapping the bucket_id to node_id in the format:
+```
+<bucket_id> [<node_id>]
+```
+The hastables are used to perform unsupervised identity stitching and can be used for AND/OR Amplification.
+
 
 # Question & troubleshooting
 
