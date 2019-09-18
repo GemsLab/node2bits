@@ -79,7 +79,7 @@ In addition to embedding file indicated in the path ```output```, node2bits also
 ```
 <bucket_id> [<node_id>]
 ```
-The hastables are used to perform unsupervised identity stitching and can be used for AND/OR Amplification.
+The hashtables are used to perform unsupervised identity stitching and can be used for AND/OR Amplification.
 
 
 # Question & troubleshooting
