@@ -534,6 +534,19 @@ def edges_sample(time_edge_dict, c, init_mod):
 	return srcs
 
 
+def read_embedding(input_feature_file, delimiter):
+	features_dict = {}
+	features_unorder = np.genfromtxt(input_feature_file, dtype=float, delimiter=delimiter)
+	m, n = features_unorder.shape
+	print 'features_unorder read in.'
+	for i in range(m):
+		if i % 50000 == 0:
+			print i
+		key = int(features_unorder[i, 0])
+		value = features_unorder[i, 1:]
+		features_dict[key] = value
+
+	return features_dict
 
 def write_embedding(rep, output_file_path):
 	N, K = rep.shape
