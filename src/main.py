@@ -76,11 +76,26 @@ def hash_func(PSs, Ks, Ts):
 
 	return tables, f_rep
 	
+def get_input_features(input_attri_path, N, delimiter):
+
+	if input_attri_path is None:
+		return None
+
+	input_feature_dict = read_embedding(input_attri_path, delimiter)
+	F = len(next(iter(input_feature_dict.items()))[1])
+
+	input_feature_matrix = np.zeros((N, F), dtype=float)
+
+	for key in input_feature_dict:
+		input_feature_matrix[key,:] = input_feature_dict[key]
+
+	return input_feature_matrix
+
 
 
 def get_init_features(graph, base_features, nodes_to_explore):
 
-	init_feature_matrix = np.zeros((len(nodes_to_explore), len(base_features)))
+	init_feature_matrix = np.zeros((len(nodes_to_explore), len(base_features)), dtype=float)
 	adj = graph.adj_matrix
 
 	if "outdegree" in base_features:
@@ -158,14 +173,19 @@ def feature_binning(graph, init_feature_matrix, nodes_to_explore, S, i):
 
 
 
-def construct_prox_structure(graph, nodes_to_explore, base_features, S_out, dist_scope):
+def construct_prox_structure(graph, nodes_to_explore, input_features, base_features, S_out, dist_scope):
 
 	init_feature_matrix = get_init_features(graph, base_features, nodes_to_explore)
+	
+	if input_features is not None:
+		combined_feature_matix = np.concatenate((input_features, init_feature_matrix), axis=1)
+	else:
+		combined_feature_matix = init_feature_matrix
+
 
 	feature_matrices = []
-
 	for i in range(dist_scope):
-		feature_matrices.append( feature_binning(graph, init_feature_matrix, nodes_to_explore, S_out, i) )
+		feature_matrices.append( feature_binning(graph, combined_feature_matix, nodes_to_explore, S_out, i) )
 
 	return feature_matrices
 
@@ -312,6 +332,8 @@ def parse_args():
 
 	parser.add_argument('--cat', nargs='?', default='../graph/test_cat.tsv', help='Input node category file path')
 
+	parser.add_argument('--attri', nargs='?', default=None, help='(optional) Input node attribute file path')
+
 	parser.add_argument('--output', nargs='?', default='../emb/test_emb.txt', help='Embedding file path')
 
 	parser.add_argument('--dim', type=int, default=128, help='Embedding dimension')
@@ -338,6 +360,7 @@ if __name__ == '__main__':
 
 	input_file_path = args.input
 	input_gt_path = args.cat
+	input_attri_path = args.attri
 	output_file_path = args.output
 	dim = args.dim
 	scope = args.scope
@@ -350,6 +373,8 @@ if __name__ == '__main__':
 	print '----------------------------------'
 	print '[Input graph file] ' + input_file_path
 	print '[Input category file] ' + input_gt_path
+	if input_attri_path:
+		print '[Input attribute file]' + input_attri_path
 	print '[Output embedding file] ' + output_file_path
 	print '[Embedding dimension] ' + str(dim)
 	print '[Value of scope] ' + str(scope)
@@ -406,7 +431,9 @@ if __name__ == '__main__':
 
 	walks, S_out = G.simulate_walks(walk_num, walk_length, nodes_to_explore, walk_mod, graph_mod, init_mod)
 
-	PSs = construct_prox_structure(G, nodes_to_explore, base_features, S_out, scope)
+	MF = get_input_features(input_attri_path, num_nodes, delimiter)
+
+	PSs = construct_prox_structure(G, nodes_to_explore, MF, base_features, S_out, scope)
 
 	tables, rep = hash_func(PSs, Ks, Ts)
 
